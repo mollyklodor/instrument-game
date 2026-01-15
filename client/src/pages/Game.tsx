@@ -1,3 +1,40 @@
+function normalizeSpoken(s: string) {
+  return (s || "")
+    .toLowerCase()
+    .replace(/[^a-z\s]/g, " ")     // remove punctuation/numbers
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/\b(the|a|an|my|your)\b/g, "") // drop common filler
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// very small, simple “close enough” check
+function looseMatch(spokenRaw: string, targetRaw: string) {
+  const spoken = normalizeSpoken(spokenRaw);
+  const target = normalizeSpoken(targetRaw);
+
+  if (!spoken || !target) return false;
+  if (spoken === target) return true;
+  if (spoken.includes(target)) return true;   // "the flute" includes "flute"
+  if (target.includes(spoken) && spoken.length >= 4) return true; // partial but decent length
+
+  // optional: accept one-word near-miss (helps kid voices)
+  // e.g., "flut" vs "flute"
+  if (!spoken.includes(" ") && !target.includes(" ")) {
+    const a = spoken;
+    const b = target;
+    const maxLen = Math.max(a.length, b.length);
+    const minLen = Math.min(a.length, b.length);
+    if (minLen >= 4 && maxLen - minLen <= 1) {
+      // one char off in length can still be fine
+      if (a.startsWith(b.slice(0, 4)) || b.startsWith(a.slice(0, 4))) return true;
+    }
+  }
+
+  return false;
+}
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useRoute } from "wouter";
 import confetti from "canvas-confetti";
