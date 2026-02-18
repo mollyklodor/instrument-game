@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Instrument Pronunciation Practice</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section id="start-screen" class="screen start-screen">
+        <h1 class="title">Super Sound Safari</h1>
+        <p class="subtitle">Say each instrument name, unlock fun facts, and earn points.</p>
+        <div class="start-badges" aria-hidden="true">
+          <span>Music Mission</span>
+          <span>20 Instruments</span>
+          <span>Voice + Choices</span>
+        </div>
+        <button id="launch-button" class="primary-button" type="button">Start Adventure</button>
+      </section>
+
+      <section id="game-screen" class="screen" hidden>
+        <section class="card" aria-live="polite">
+          <p class="progress" id="progress">1 of 20</p>
+
+          <img id="instrument-image" src="assets/trumpet.svg" alt="Instrument image" class="instrument-image" />
+
+          <div class="status-row">
+            <span id="listening-indicator" class="listening" hidden>Listening...</span>
+            <p id="status-message" class="status-message">Tap "Start Speaking" when ready.</p>
+          </div>
+
+          <button id="speak-button" class="speak-button" type="button">Start Speaking</button>
+
+          <section id="choices-panel" class="choices-panel" hidden>
+            <p class="choices-title">Choose the correct instrument to continue:</p>
+            <div id="choices-grid" class="choices-grid"></div>
+          </section>
+
+          <section id="fact-panel" class="fact-panel" hidden>
+            <p id="fact-text" class="fact-text"></p>
+            <button id="next-button" class="next-button" type="button">Next Instrument</button>
+          </section>
+        </section>
+      </section>
+
+      <section id="end-screen" class="screen end-screen" hidden>
+        <h2>Great Work!</h2>
+        <p id="final-summary" class="final-summary">You scored 0 points.</p>
+        <p class="score-note">Scoring: 2 points first try, 1 point second try, 0 points after multiple choice.</p>
+        <button id="restart-button" class="primary-button" type="button">Play Again</button>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

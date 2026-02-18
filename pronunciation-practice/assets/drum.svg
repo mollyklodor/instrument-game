@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500" role="img" aria-labelledby="title desc">
+  <title id="title">Drum placeholder image</title>
+  <desc id="desc">Placeholder image for drum. Replace this file with a real drum photo or drawing.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff4d9" />
+      <stop offset="100%" stop-color="#d9f0ff" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)" />
+  <rect x="24" y="24" width="752" height="452" rx="20" fill="#ffffff" stroke="#0f172a" stroke-width="4" />
+  <text x="400" y="190" text-anchor="middle" font-family="Verdana, sans-serif" font-size="64" font-weight="700" fill="#0f172a">Drum</text>
+  <text x="400" y="255" text-anchor="middle" font-family="Verdana, sans-serif" font-size="30" fill="#1f2937">Placeholder Image</text>
+  <text x="400" y="305" text-anchor="middle" font-family="Verdana, sans-serif" font-size="24" fill="#475569">Replace with a real drum image</text>
+</svg>

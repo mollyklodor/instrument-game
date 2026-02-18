@@ -30,6 +30,11 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Include pronunciation app
+        run: |
+          mkdir -p dist/pronunciation-practice
+          cp -R pronunciation-practice/* dist/pronunciation-practice/
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
