@@ -11,7 +11,7 @@ const IMAGE_OVERRIDES = {
   violin: "https://commons.wikimedia.org/wiki/Special:FilePath/Violin%20VL100.png",
   cello: "https://commons.wikimedia.org/wiki/Special:FilePath/Cello%20front%20side.jpg",
   harp: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Harp_%28PSF%29.png",
-  guitar: "https://upload.wikimedia.org/wikipedia/commons/6/61/Acoustic_Guitar_with_Seashell_Inlay.jpg",
+  guitar: "https://upload.wikimedia.org/wikipedia/commons/4/45/GuitareClassique5.png",
   "snare drum": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Snare_Drum.jpg",
   "bass drum": "https://commons.wikimedia.org/wiki/Special:FilePath/Bass%20drum.jpg",
   cymbals: "https://upload.wikimedia.org/wikipedia/commons/4/49/2006-07-06_crash_paiste_16.jpg",
@@ -21,7 +21,7 @@ const IMAGE_OVERRIDES = {
   maracas: "https://upload.wikimedia.org/wikipedia/commons/a/ac/Maracas.jpg",
 };
 
-const instruments = [
+const allInstruments = [
   { family: "Brass", name: "trumpet", funFact: "Has three buttons called valves." },
   { family: "Brass", name: "trombone", funFact: "Uses a long slide to change the sound." },
   { family: "Brass", name: "french horn", funFact: "The tubing is over 12 feet long if you uncurled it!" },
@@ -57,7 +57,7 @@ function shuffleInPlace(list) {
 const startScreenEl = document.getElementById("start-screen");
 const gameScreenEl = document.getElementById("game-screen");
 const endScreenEl = document.getElementById("end-screen");
-const launchButton = document.getElementById("launch-button");
+const familyButtons = Array.from(document.querySelectorAll(".family-button"));
 const restartButton = document.getElementById("restart-button");
 const finalSummaryEl = document.getElementById("final-summary");
 
@@ -75,6 +75,8 @@ const nextButton = document.getElementById("next-button");
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 let recognition;
+let activeInstruments = [];
+let selectedFamily = "";
 let currentIndex = 0;
 let attemptCount = 0;
 let score = 0;
@@ -137,11 +139,11 @@ function refreshSpeakButton() {
 }
 
 function updateProgress() {
-  progressEl.textContent = `${currentIndex + 1} of ${instruments.length}`;
+  progressEl.textContent = `${currentIndex + 1} of ${activeInstruments.length}`;
 }
 
 function updateImage() {
-  imageEl.src = instruments[currentIndex].image;
+  imageEl.src = activeInstruments[currentIndex].image;
   imageEl.alt = "Instrument image";
 }
 
@@ -183,8 +185,8 @@ function hideChoices() {
 }
 
 function showChoices() {
-  const current = instruments[currentIndex];
-  const allNames = instruments.map((item) => item.name);
+  const current = activeInstruments[currentIndex];
+  const allNames = activeInstruments.map((item) => item.name);
   const wrongOptions = allNames.filter((name) => name !== current.name);
   const options = [current.name];
 
@@ -221,7 +223,7 @@ function showChoices() {
 }
 
 function showFunFact() {
-  const current = instruments[currentIndex];
+  const current = activeInstruments[currentIndex];
   factTextEl.textContent = `${titleCase(current.name)} fun fact: ${current.funFact}`;
   factPanelEl.hidden = false;
   showingFact = true;
@@ -229,11 +231,11 @@ function showFunFact() {
 }
 
 function showEndScreen() {
-  const maxScore = instruments.length * 2;
+  const maxScore = activeInstruments.length * 2;
   startScreenEl.hidden = true;
   gameScreenEl.hidden = true;
   endScreenEl.hidden = false;
-  finalSummaryEl.textContent = `You scored ${score} out of ${maxScore} points. Voice wins: ${voiceCorrectCount} of ${instruments.length}.`;
+  finalSummaryEl.textContent = `${selectedFamily} score: ${score} out of ${maxScore}. Voice wins: ${voiceCorrectCount} of ${activeInstruments.length}.`;
 }
 
 function beginRound() {
@@ -245,7 +247,7 @@ function beginRound() {
   factPanelEl.hidden = true;
   updateProgress();
   updateImage();
-  setStatus("Tap \"Start Speaking\" when you are ready.");
+  setStatus(`Tap \"Start Speaking\" when you are ready. ${selectedFamily} challenge.`);
   refreshSpeakButton();
 }
 
@@ -268,7 +270,7 @@ function handleCorrectAnswer(method) {
 function nextInstrument() {
   currentIndex += 1;
 
-  if (currentIndex >= instruments.length) {
+  if (currentIndex >= activeInstruments.length) {
     finished = true;
     showEndScreen();
     return;
@@ -322,7 +324,7 @@ function setupRecognition() {
 
   recognition.onresult = (event) => {
     const transcript = normalize(event.results[0][0].transcript || "");
-    const acceptedAnswers = getAcceptedAnswers(instruments[currentIndex].name);
+    const acceptedAnswers = getAcceptedAnswers(activeInstruments[currentIndex].name);
 
     if (acceptedAnswers.some((answer) => transcript.includes(answer))) {
       handleCorrectAnswer("voice");
@@ -351,13 +353,29 @@ function setupRecognition() {
   return true;
 }
 
-function startGame() {
-  const ready = setupRecognition();
+function ensureRecognition() {
+  if (recognition) {
+    return true;
+  }
+  return setupRecognition();
+}
+
+function showStartScreen() {
+  startScreenEl.hidden = false;
+  gameScreenEl.hidden = true;
+  endScreenEl.hidden = true;
+}
+
+function startGame(family) {
+  selectedFamily = family;
+  const ready = ensureRecognition();
   if (!ready) {
     return;
   }
 
-  shuffleInPlace(instruments);
+  activeInstruments = allInstruments.filter((item) => item.family === selectedFamily);
+  shuffleInPlace(activeInstruments);
+
   currentIndex = 0;
   score = 0;
   voiceCorrectCount = 0;
@@ -370,8 +388,13 @@ function startGame() {
   beginRound();
 }
 
-launchButton.addEventListener("click", startGame);
-restartButton.addEventListener("click", startGame);
+familyButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    startGame(button.dataset.family);
+  });
+});
+
+restartButton.addEventListener("click", showStartScreen);
 speakButton.addEventListener("click", startListening);
 nextButton.addEventListener("click", () => {
   if (!finished) {

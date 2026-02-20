@@ -73,6 +73,29 @@ body {
   font-size: 0.92rem;
 }
 
+.family-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.family-button {
+  border: 2px solid #93c5fd;
+  background: #dbeafe;
+  color: #0f172a;
+  font-size: 1rem;
+  font-weight: 800;
+  border-radius: 0.8rem;
+  padding: 0.85rem 0.7rem;
+  cursor: pointer;
+}
+
+.family-button:hover,
+.family-button:focus-visible {
+  background: #bfdbfe;
+  border-color: #60a5fa;
+}
+
 .primary-button,
 .speak-button,
 .next-button {
@@ -220,7 +243,8 @@ body {
 }
 
 @media (max-width: 560px) {
-  .choices-grid {
+  .choices-grid,
+  .family-grid {
     grid-template-columns: 1fr;
   }
 }
